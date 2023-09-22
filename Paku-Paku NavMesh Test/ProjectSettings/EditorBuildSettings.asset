@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/GameScene.unity
+    guid: 6b923037b0e56e74ebd75c9d9feb65d5
+  - enabled: 1
+    path: Assets/Scenes/GameOverScene.unity
+    guid: 3c284f50cac5c3e46bc231e0aea5e6d4
   m_configObjects: {}

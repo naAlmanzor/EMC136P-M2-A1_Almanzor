@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform orientation;
     float horizontalInput;
     float verticalInput;
+    public bool canMove = true;
 
     Vector3 moveDirection;
 
@@ -25,19 +26,33 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        MovePlayer();
+        if(canMove)
+        {
+            MovePlayer();
+        }
     }
     // Update is called once per frame
     void Update()
     {
-        PlayerInput();
-        rb.drag = groundDrag;
+        if(canMove)
+        {
+            PlayerInput();
+            rb.drag = groundDrag;
+        }
     }
 
     void PlayerInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Enemy")
+        {
+            canMove = false;
+        }
     }
 
     void MovePlayer()

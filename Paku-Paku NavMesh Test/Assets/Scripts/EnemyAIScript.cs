@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+
 public class EnemyAIScript : MonoBehaviour
 {
     public NavMeshAgent enemy;
@@ -74,6 +76,7 @@ public class EnemyAIScript : MonoBehaviour
     {
         if(other.gameObject.tag == "Player"){
             Debug.Log("ENEMY HIT PLAYER!");
+            StartCoroutine(WaitForFunction());
         }
     }
 
@@ -108,5 +111,11 @@ public class EnemyAIScript : MonoBehaviour
         Gizmos.color = Color.red;
         Vector3 direction = transform.TransformDirection(Vector3.forward) * sightRange;
         Gizmos.DrawRay(transform.position, direction);
+    }
+
+    IEnumerator WaitForFunction()
+    {
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadScene("GameOverScene");  
     }
 }
