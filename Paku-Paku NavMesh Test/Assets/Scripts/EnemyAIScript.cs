@@ -25,8 +25,6 @@ public class EnemyAIScript : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        // start = GameObject.FindGameObjectWithTag("start").transform;
-        // end = GameObject.FindGameObjectWithTag("end").transform;
         enemy = GetComponent<NavMeshAgent>();
     }
 
@@ -47,6 +45,11 @@ public class EnemyAIScript : MonoBehaviour
         if(!playerInRangeArea)
         {
             Patroling();
+        }
+
+        else
+        {
+            Chasing();
         }
 
         // Checks Player in line of sight
@@ -76,6 +79,9 @@ public class EnemyAIScript : MonoBehaviour
 
     void Patroling()
     {
+        // Sets destination of enemy to current waypoint
+        enemy.destination = waypoints[destPoints].position;
+        
         // Checks if enemy is close to the waypoint
         if (!enemy.pathPending && enemy.remainingDistance <= 0.5f){
 
@@ -85,13 +91,9 @@ public class EnemyAIScript : MonoBehaviour
                 return;
             }
 
-            // Sets destination of enemy to current waypoint
-            enemy.destination = waypoints[destPoints].position;
-
             // Moves to next waypoint in the list and cycles
             destPoints = (destPoints + 1) % waypoints.Length;
         }
-        
     }
 
     void Chasing()
