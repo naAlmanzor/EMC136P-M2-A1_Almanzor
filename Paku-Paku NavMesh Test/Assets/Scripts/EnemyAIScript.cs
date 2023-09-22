@@ -11,9 +11,8 @@ public class EnemyAIScript : MonoBehaviour
     public LayerMask whatIsGround, whatIsPlayer;
 
     [Header("Waypoints")]
-    public Transform start;
-    public Transform end;
-    public Transform target;
+    public Transform[] waypoints;
+    private int destPoints = 0;
  
     [Header("Enemy Range Settings")] 
     public float areaRange, sightRange;
@@ -26,15 +25,14 @@ public class EnemyAIScript : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        start = GameObject.FindGameObjectWithTag("start").transform;
-        end = GameObject.FindGameObjectWithTag("end").transform;
+        // start = GameObject.FindGameObjectWithTag("start").transform;
+        // end = GameObject.FindGameObjectWithTag("end").transform;
         enemy = GetComponent<NavMeshAgent>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // target = start;
         Patroling();
     }
 
@@ -45,18 +43,10 @@ public class EnemyAIScript : MonoBehaviour
         playerInRangeLine = Physics.Raycast(transform.position, transform.forward, out hit, 
         sightRange,LayerMask.GetMask("Default", "Player"));
 
-        // Checks Player in Radius
+        // Checks player in range
         if(!playerInRangeArea)
         {
-            Debug.Log("Player not in range");
             Patroling();
-        }
-        
-        // Chase player if in radius range
-        else
-        {
-            Debug.Log("Player in range");
-            Chasing();    
         }
 
         // Checks Player in line of sight
@@ -73,8 +63,8 @@ public class EnemyAIScript : MonoBehaviour
                 Debug.Log("Player not in line of sight");
                 Patroling();
             }
-        }
 
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -84,18 +74,22 @@ public class EnemyAIScript : MonoBehaviour
         }
     }
 
-    void searchWaypoints()
-    {
-        // wayPoint = new Vector3(transform.position.x + waypointStart.position.x)
-    }
     void Patroling()
     {
-        if (enemy.remainingDistance <= enemy.stoppingDistance && start){
-            enemy.SetDestination(end.position);
-        }
+        // Checks if enemy is close to the waypoint
+        if (!enemy.pathPending && enemy.remainingDistance <= 0.5f){
 
-        if (enemy.remainingDistance <= enemy.stoppingDistance && end){
-            enemy.SetDestination(start.position);
+            // retrurns if there are no waypoints set
+            if(waypoints.Length == 0)
+            {
+                return;
+            }
+
+            // Sets destination of enemy to current waypoint
+            enemy.destination = waypoints[destPoints].position;
+
+            // Moves to next waypoint in the list and cycles
+            destPoints = (destPoints + 1) % waypoints.Length;
         }
         
     }
@@ -104,21 +98,6 @@ public class EnemyAIScript : MonoBehaviour
     {
         enemy.SetDestination(player.position);
     }
-
-    // void UpdateDestination()
-    // {
-    //     target = waypoints[waypointIndex];
-    //     enemy.SetDestination(target.position);
-    // }
-
-    // void IterateWaypoint()
-    // {
-    //     waypointIndex++;
-    //     if(waypointIndex == waypoints.Length)
-    //     {
-    //         waypointIndex = 0;
-    //     }
-    // }
 
     void OnDrawGizmosSelected()
     {
